@@ -4,6 +4,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -16,6 +18,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import com.example.model.Track;
+import com.example.model.URL;
 
 /**
  * Root resource (exposed at "myresource" path)
@@ -93,6 +96,119 @@ public class MyResource {
 
 		return track;
 
+	}
+	
+    // get example returning JSON
+    // curl: curl -i http://localhost:8080/simple-service-webapp/webapi/myresource/getTracks
+	@GET
+	@Path("/getTracks")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Track> getTracksInJSON() {
+
+		List<Track> trackList = new ArrayList<Track>();
+		
+		Track track1 = new Track();
+		track1.setTitle("Enter Sandman");
+		track1.setSinger("Metallica");
+		trackList.add(track1);
+
+		Track track2 = new Track();
+		track2.setTitle("We will rock you");
+		track2.setSinger("Queen");
+		trackList.add(track2);
+		
+		return trackList;
+	}
+	
+    // get example returning JSON
+    // curl: curl -i http://localhost:8080/simple-service-webapp/webapi/myresource/getURLs
+	@GET
+	@Path("/getURLs")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<URL> getURLsInJSON() {
+
+		List<URL> urlList = new ArrayList<URL>();
+		
+		URL url1 = new URL();
+		url1.setUrl("http://www.google.com");
+		urlList.add(url1);
+
+		URL url2 = new URL();
+		url2.setUrl("http://www.amazon.com");
+		urlList.add(url2);
+		
+		System.out.println("* Got URLS.");
+		
+		return urlList;
+	}
+	
+    // get example returning JSON
+    // curl: curl -i http://localhost:8080/simple-service-webapp/webapi/myresource/getLandingPage
+	@GET
+	@Path("/getLandingPage")
+	@Produces(MediaType.TEXT_HTML)
+	public String getLandingPage() {
+
+		return "\n" + 
+				"<html>\n" + 
+				"   <head>\n" + 
+				"      <title>URLs Landing Page using Angular JS</title>\n" + 
+				"      \n" + 
+				"      <style>\n" + 
+				"         table, th , td {\n" + 
+				"            border: 1px solid grey;\n" + 
+				"            border-collapse: collapse;\n" + 
+				"            padding: 5px;\n" + 
+				"         }\n" + 
+				"         \n" + 
+				"         table tr:nth-child(odd) {\n" + 
+				"            background-color: #f2f2f2;\n" + 
+				"         }\n" + 
+				"         \n" + 
+				"         table tr:nth-child(even) {\n" + 
+				"            background-color: #ffffff;\n" + 
+				"         }\n" + 
+				"      </style>\n" + 
+				"      \n" + 
+				"   </head>\n" + 
+				"   <body>\n" + 
+				"      <h2>URLs Landing Page using Angular JS</h2>\n" + 
+				"      <div ng-app = \"\" ng-controller = \"urlController\">\n" + 
+				"      \n" + 
+				"         <table>\n" + 
+				"            <tr>\n" + 
+				"               <th>URL</th>\n" + 
+				"            </tr>\n" + 
+				"         \n" + 
+				"            <tr ng-repeat = \"url in urls\">\n" + 
+				"               <td>{{ url.url }}</td>\n" + 
+				"            </tr>\n" + 
+				"         </table>\n" + 
+				"         <button ng-click=\"loadData()\">Refresh</button>\n" + 
+				"      </div>\n" + 
+				"      \n" + 
+				"      <script>\n" + 
+				"         function urlController($interval,$scope,$http) {\n" + 
+				"        	 \n" + 
+				"    		 var url = \"getURLs\";\n" + 
+				"             $http.get(url).success( function(response) {\n" + 
+				"                 $scope.urls = response;\n" + 
+				"              });\n" + 
+				"        	 \n" + 
+				"        	 $scope.getMyData = function() {\n" + 
+				"                 $http.get(url).success( function(response) {\n" + 
+				"                     $scope.urls = response;\n" + 
+				"                  });\n" + 
+				"        	 }\n" + 
+				"        	 \n" + 
+				"            $interval($scope.getMyData, 2000);\n" + 
+				"         }\n" + 
+				"         \n" + 
+				"      </script>\n" + 
+				"      \n" + 
+				"      <script src = \"http://ajax.googleapis.com/ajax/libs/angularjs/1.2.15/angular.min.js\"></script>\n" + 
+				"   </body>\n" + 
+				"</html>";
 	}
     
     // now create a post that consumes a JSON payload
