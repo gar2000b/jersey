@@ -33,7 +33,8 @@
                <td>{{ url.url }}</td>
             </tr>
          </table>
-         <button ng-click="loadData()">Refresh</button>
+         <br />
+         <button ng-click="getMyData()">Refresh</button>
       </div>
       
       <script>
@@ -47,6 +48,7 @@
         	 $scope.getMyData = function() {
                  $http.get(url).success( function(response) {
                      $scope.urls = response;
+                     console.log("URL: " + url + " called.");
                   });
         	 }
         	 

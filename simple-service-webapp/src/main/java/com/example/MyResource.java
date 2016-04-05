@@ -184,7 +184,8 @@ public class MyResource {
 				"               <td>{{ url.url }}</td>\n" + 
 				"            </tr>\n" + 
 				"         </table>\n" + 
-				"         <button ng-click=\"loadData()\">Refresh</button>\n" + 
+				"         <br />\n" + 
+				"         <button ng-click=\"getMyData()\">Refresh</button>\n" + 
 				"      </div>\n" + 
 				"      \n" + 
 				"      <script>\n" + 
@@ -198,6 +199,7 @@ public class MyResource {
 				"        	 $scope.getMyData = function() {\n" + 
 				"                 $http.get(url).success( function(response) {\n" + 
 				"                     $scope.urls = response;\n" + 
+				"                     console.log(\"URL: \" + url + \" called.\");\n" + 
 				"                  });\n" + 
 				"        	 }\n" + 
 				"        	 \n" + 
