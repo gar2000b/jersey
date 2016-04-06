@@ -4,9 +4,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -14,8 +18,11 @@ import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
 
 import com.example.model.Track;
 import com.example.model.URL;
@@ -25,6 +32,9 @@ import com.example.model.URL;
  */
 @Path("myresource")
 public class MyResource {
+	
+	@Context
+	private HttpServletResponse response;
 
 	/**
 	 * Method handling HTTP GET requests. The returned object will be sent to
@@ -226,5 +236,50 @@ public class MyResource {
 		return Response.status(201).entity(result).build();
 		
 	}
+	
+    @GET
+    @Path("/getFile")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response downloadFile()
+    {
+        StreamingOutput fileStream =  new StreamingOutput() 
+        {
+            @Override
+            public void write(java.io.OutputStream output) throws IOException, WebApplicationException 
+            {
+                try
+                {
+                    java.nio.file.Path path = Paths.get("/tmp/test.txt");
+                    byte[] data = Files.readAllBytes(path);
+                    output.write(data);
+                    output.flush();
+                } 
+                catch (Exception e) 
+                {
+                    throw new WebApplicationException("File Not Found !!");
+                }
+            }
+        };
+        return Response
+                .ok(fileStream, MediaType.APPLICATION_OCTET_STREAM)
+                .header("content-disposition","attachment; filename = downloaded-test.txt")
+                .build();
+    }
+    
+    @GET
+    @Path("/getFileFromContext")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public void downloadFileFromContext() throws IOException
+    {
+    	response.setContentType(MediaType.APPLICATION_JSON);
+    	response.setHeader("content-disposition","attachment; filename = downloaded-test.txt");
+    	ServletOutputStream outputStream = response.getOutputStream();
+    	
+        java.nio.file.Path path = Paths.get("/tmp/test.txt");
+        byte[] data = Files.readAllBytes(path);
+        outputStream.write(data);
+        outputStream.flush();
+    	
+    }
 
 }
